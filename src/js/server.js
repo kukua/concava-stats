@@ -12,7 +12,7 @@ var templatePath = path.resolve(__dirname, '../../src/tpl/index.hbs')
 var template = Handlebars.compile(fs.readFileSync(templatePath, 'utf8'))
 const range = 24 * 60 * 60 * 1000 // milliseconds
 const timeout = 10 * 1000 // milliseconds
-const port = 9000
+const port = 8080
 
 app.get('/',  (req, res) => {
 	var since = new Date(Date.now() - range)
