@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>ConCaVa Statistics</title>
+</html>
+<body>
+
+<h1>ConCaVa Statistics</h1>
+<p>Since {{since}}:</p>
+{{#if err}}
+<p>An error occured: {{err}}</p>
+{{/if}}
+
+<table border=1>
+	<thead>
+		<tr>
+			<th>Device ID</th>
+			<th>Name</th>
+			<th>SPUL buffers</th>
+			<th>Storage records</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#each devices}}
+		<tr>
+			<td>{{id}}</td>
+			<td>{{name}}</td>
+			<td>{{spulCount}}</td>
+			<td>{{storageCount}}</td>
+		</tr>
+		{{/each}}
+	</tbody>
+</table>
+
+</body>
+</html>
