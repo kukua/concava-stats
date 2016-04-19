@@ -64,7 +64,10 @@ app.get('/',  (req, res) => {
 		})
 
 		client.query('SHOW TABLES', (err, tables) => {
-			if (err) return done(err)
+			if (err) {
+				client.destroy()
+				return done(err)
+			}
 
 			tables = _.flatten(_.map(tables, _.values))
 			var sql = 'SELECT ' + _.map(tables, (table) => `
@@ -74,9 +77,10 @@ app.get('/',  (req, res) => {
 				AS \`${table}\``).join(',')
 
 			client.query(sql, (err, counts) => {
-				client.destroy()
-
-				if (err) return done(err)
+				if (err) {
+					client.destroy()
+					return done(err)
+				}
 
 				_.each(counts[0], (count, id) => {
 					if ( ! devices[id]) addDevice(id)
@@ -84,6 +88,7 @@ app.get('/',  (req, res) => {
 					devices[id].storageCount += count
 				})
 
+				client.destroy()
 				done()
 			})
 		})
