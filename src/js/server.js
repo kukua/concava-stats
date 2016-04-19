@@ -120,6 +120,7 @@ app.get('/',  (req, res) => {
 		_.each(devices, (device) => {
 			p.add((done) => {
 				client.query(sql, [device.id, timestamp], (err, rows) => {
+					if (err && err.toString().indexOf('ER_NO_SUCH_TABLE') > -1) return done()
 					if (err) return done(err)
 					if ( ! rows.length) return done()
 
