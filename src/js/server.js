@@ -121,6 +121,7 @@ app.get('/',  (req, res) => {
 			p.add((done) => {
 				client.query(sql, [device.id, timestamp], (err, rows) => {
 					if (err) return done(err)
+					if ( ! rows.length) return done()
 
 					var data = rows[0]
 					delete data._raw
