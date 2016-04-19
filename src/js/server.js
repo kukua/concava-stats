@@ -115,14 +115,16 @@ app.get('/',  (req, res) => {
 			database: process.env['MYSQL_DATABASE']
 		})
 		var p = parallel().timeout(timeout)
-		var sql = 'SELECT * FROM ?? ORDER BY `timestamp` DESC LIMIT 1'
+		var sql = 'SELECT * FROM ?? WHERE `timestamp` >= FROM_UNIXTIME(?) ORDER BY `timestamp` DESC LIMIT 1'
 
 		_.each(devices, (device) => {
 			p.add((done) => {
-				client.query(sql, [device.id], (err, rows) => {
+				client.query(sql, [device.id, timestamp], (err, rows) => {
 					if (err) return done(err)
 
-					device.storageRecord = JSON.stringify(rows[0])
+					var data = rows[0]
+					delete data._raw
+					device.storageRecord = JSON.stringify(data)
 					done()
 				})
 			})
