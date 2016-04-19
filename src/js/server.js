@@ -107,8 +107,33 @@ app.get('/',  (req, res) => {
 			_.each(devices, (device) => { device.name = names[device.id] || '' })
 		}
 
-		// Render template
-		res.send(template({ err, since, devices }))
+		// Get last storage records
+		var client = mysql.createConnection({
+			host: process.env['MYSQL_HOST'],
+			user: process.env['MYSQL_USER'],
+			password: process.env['MYSQL_PASSWORD'],
+			database: process.env['MYSQL_DATABASE']
+		})
+		var p = parallel().timeout(timeout)
+		var sql = 'SELECT * FROM ?? ORDER BY `timestamp` DESC LIMIT 1'
+
+		_.each(devices, (device) => {
+			p.add((done) => {
+				client.query(sql, [device.id], (err, rows) => {
+					if (err) return done(err)
+
+					device.storageRecord = JSON.stringify(rows[0])
+					done()
+				})
+			})
+		})
+
+		p.done((err) => {
+			client.destroy()
+
+			// Render template
+			res.send(template({ err, since, devices }))
+		})
 	})
 })
 
