@@ -39,7 +39,6 @@ app.get('/',  (req, res) => {
 		var cmd = `
 			cat /spul.log \
 			| tail -n"${max}" \
-			| bunyan -0 \
 			| grep '"payload":'`
 
 		exec(cmd, (err, stdout, stderr) => {
