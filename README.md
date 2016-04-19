@@ -10,6 +10,7 @@ cd concava-stats
 cp .env.sample .env
 chmod 600 .env
 # > Edit .env
+# > Edit path to log in docker-compose.yml
 
 docker-compose up -d
 

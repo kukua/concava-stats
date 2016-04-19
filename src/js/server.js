@@ -18,7 +18,11 @@ app.get('/',  (req, res) => {
 	var since = new Date(Date.now() - range)
 	var devices = {}
 	var addDevice = (id) => {
-		devices[id] = { id, name: '', spulCount: 0, storageCount: 0 }
+		devices[id] = {
+			id, name: '',
+			spulCount: 0, spulBuffer: '',
+			storageCount: 0, storageRecord: '',
+		}
 	}
 
 	// Floor to round hour
@@ -31,23 +35,24 @@ app.get('/',  (req, res) => {
 
 	// Query SPUL buffers
 	p.add((done) => {
-		var container = process.env['SPUL_CONTAINER']
 		var max = process.env['SPUL_LOG_LIMIT']
 		var cmd = `
-			docker logs "${container}" 2>/dev/null \
+			cat /spul.log \
 			| tail -n"${max}" \
-			| grep "buffer:" \
-			| awk "{print $2 $4}"` // "<timestamp>,<device id>\n"
+			| bunyan -0 \
+			| grep '"payload":'`
 
-		exec(cmd, (err, stdout) => {
+		exec(cmd, (err, stdout, stderr) => {
 			if (err) return done(err)
+			if (stderr) return done(stderr)
 
 			_.each(stdout.split('\n'), (row) => {
-				var values = row.split(',')
-				if (parseInt(values[0], 10) >= timestamp) {
-					var id = values[1]
+				var values = JSON.parse(row)
+				if (values.timestamp >= timestamp) {
+					var id = values.deviceId
 					if ( ! devices[id]) addDevice(id)
 					devices[id].spulCount += 1
+					devices[id].spulBuffer = values.payload
 				}
 			})
 
@@ -55,7 +60,7 @@ app.get('/',  (req, res) => {
 		})
 	})
 
-	// Query storage records
+	// Query storage record counts
 	p.add((done) => {
 		var client = mysql.createConnection({
 			host: process.env['MYSQL_HOST'],

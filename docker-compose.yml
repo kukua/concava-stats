@@ -2,4 +2,6 @@ stats:
     build: .
     env_file: .env
     ports:
-        - 8080:8080
+        - "8080:8080"
+    volumes:
+        - /path/to/connector-spul.log:/spul.log:ro
