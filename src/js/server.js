@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import {exec} from 'child_process'
 import express from 'express'
 import Handlebars from 'handlebars'
 import parallel from 'node-parallel'
@@ -35,28 +34,24 @@ app.get('/',  (req, res) => {
 
 	// Query SPUL buffers
 	p.add((done) => {
-		var max = process.env['SPUL_LOG_LIMIT']
-		var cmd = `
-			cat /spul.log \
-			| tail -n"${max}" \
-			| grep '"payload":'`
+		var rows = fs.readFileSync('/spul.log', 'utf8').split('\n')
 
-		exec(cmd, (err, stdout, stderr) => {
-			if (err) return done(err)
-			if (stderr) return done(stderr)
-
-			_.each(stdout.split('\n'), (row) => {
+		_.each(rows, (row) => {
+			try {
 				var values = JSON.parse(row)
+				if (values.msg !== 'payload') return
 				if (values.timestamp >= timestamp) {
 					var id = values.deviceId
 					if ( ! devices[id]) addDevice(id)
 					devices[id].spulCount += 1
 					devices[id].spulBuffer = values.payload
 				}
-			})
-
-			done()
+			} catch (e) {
+				// Ignore
+			}
 		})
+
+		done()
 	})
 
 	// Query storage record counts
