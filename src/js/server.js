@@ -39,12 +39,12 @@ app.get('/',  (req, res) => {
 		_.each(rows, (row) => {
 			try {
 				var values = JSON.parse(row)
-				if (values.msg !== 'payload') return
+				if (values.type !== 'payload') return
 				if (values.timestamp >= timestamp) {
 					var id = values.deviceId
 					if ( ! devices[id]) addDevice(id)
 					devices[id].spulCount += 1
-					devices[id].spulBuffer = values.payload
+					devices[id].spulBuffer = values.msg
 				}
 			} catch (e) {
 				// Ignore
