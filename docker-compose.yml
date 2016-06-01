@@ -4,4 +4,4 @@ stats:
     ports:
         - "8080:8080"
     volumes:
-        - /path/to/connector-spul.log:/spul.log:ro
+        - ./spul.log:/tmp/output.log

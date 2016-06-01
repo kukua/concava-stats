@@ -34,7 +34,7 @@ app.get('/',  (req, res) => {
 
 	// Query SPUL buffers
 	p.add((done) => {
-		var rows = fs.readFileSync('/spul.log', 'utf8').split('\n')
+		var rows = fs.readFileSync('/tmp/output.log', 'utf8').split('\n')
 
 		_.each(rows, (row) => {
 			try {
