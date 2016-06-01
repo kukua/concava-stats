@@ -23,3 +23,9 @@ npm start
 ## Notes
 
 - Create `names.json` with `{ "<device id>": "<name>" }` format to add names.
+
+## License
+
+This software is licensed under the [MIT license](https://github.com/kukua/concava-stats/blob/master/LICENSE).
+
+© 2016 Kukua BV
