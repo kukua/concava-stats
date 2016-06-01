@@ -7,10 +7,9 @@
 ```bash
 git clone https://github.com/kukua/concava-stats.git
 cd concava-stats
-cp .env.sample .env
+cp .env.example .env
 chmod 600 .env
 # > Edit .env
-# > Edit path to log in docker-compose.yml
 
 docker-compose up -d
 
