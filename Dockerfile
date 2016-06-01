@@ -7,5 +7,6 @@ COPY ./ /data/
 RUN touch /spul.log
 RUN npm install
 RUN npm run compile
+RUN npm prune --production
 
 CMD npm start
